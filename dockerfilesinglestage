@@ -1,0 +1,24 @@
+# Use the official Python image from the DockerHub
+FROM python:3.7.7-slim-buster
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Set the working directory in docker
+WORKDIR /app
+
+# Copy the content of the local src directory to the working directory
+COPY . .
+
+# Install any dependencies
+RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip && \
+    pip install django djangorestframework twilio
+
+# Uncomment if you need to run collectstatic
+# RUN python3 manage.py collectstatic --noinput --verbosity 2
+
+# Specify the command to run on container start
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
